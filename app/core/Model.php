@@ -8,7 +8,6 @@ class Model extends Database
 {
     private Database $database;
     protected string $table;
-    
     private array $query = ['all' => 'SELECT * FROM'];
 
     public function __construct()
@@ -34,12 +33,12 @@ class Model extends Database
 
     protected function all(): bool|object
     {
-        return $this->database->query("{$this->query['all']} {$this->table}");
+        return $this->database->selectQuery("{$this->query['all']} {$this->table}");
     }
 
     protected function get(): bool|object
     {
-        return $this->database->query(
+        return $this->database->selectQuery(
             "{$this->query['all']} {$this->table}{$this->query['where']}",
             $this->query['param']
         );
@@ -47,7 +46,7 @@ class Model extends Database
 
     protected function first(): bool|object
     {
-        return $this->database->query(
+        return $this->database->selectQuery(
             "{$this->query['all']} {$this->table}{$this->query['where']}",
             $this->query['param']
         )[0];
@@ -57,7 +56,7 @@ class Model extends Database
     {
         $this->where($where);
 
-        return $this->database->query(
+        return $this->database->selectQuery(
             "{$this->query['all']} {$this->table}{$this->query['where']}",
             $this->query['param']
         )[0];
@@ -74,7 +73,7 @@ class Model extends Database
 
         $holder = trim($holder, ', ');
 
-        return $this->database->query("INSERT INTO {$this->table} ($columns) VALUES ($holder)", $data);
+        return $this->database->allQuery("INSERT INTO {$this->table} ($columns) VALUES ($holder)", $data);
     }
 
     protected function update(array $data): bool
@@ -87,7 +86,7 @@ class Model extends Database
 
         $holder = trim($holder, ', ');
 
-        return $this->database->query(
+        return $this->database->allQuery(
             "UPDATE {$this->table} SET {$holder}{$this->query['where']}",
             array_merge($data, $this->query['param'])
         );
@@ -95,24 +94,19 @@ class Model extends Database
 
     protected function delete(): bool
     {
-        return $this->database->query(
+        return $this->database->allQuery(
             "DELETE FROM {$this->table}{$this->query['where']}",
             $this->query['param']
         );
     }
 
-    protected function custom(string $query, array $data): bool
-    {
-        return $this->database->query($query, $data);
-    }
-
-    protected function string_to_array(string $value): array
+    protected function stringToArray(string $value): array
     {
         $pattern = '/[\,\s]/';
         return preg_split($pattern, $value, -1, PREG_SPLIT_NO_EMPTY);
     }
 
-    protected function array_to_string(array $array): string
+    protected function arrayToString(array $array): string
     {
         return implode(',', $array);
     }

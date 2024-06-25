@@ -9,12 +9,12 @@ class Auth
 {
     public static function verifyUser(): mixed
     {
-        $jwt = '';
+        $token = '';
         
         if (Cookies::isSetCookie('Authorization')) {
-            $jwt = Cookies::getCookie('Authorization');
+            $token = Cookies::getCookie('Authorization');
         }
 
-        return JwtToken::validate($jwt);
+        return JwtToken::validate($token);
     }
 }

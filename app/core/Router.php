@@ -35,7 +35,6 @@ class Router
         }
 
         $params = [];
-
         foreach ($routePathParts as $key => $part) {
             if (strpos($part, '{') !== false) {
                 $varname = trim($part, '{}');

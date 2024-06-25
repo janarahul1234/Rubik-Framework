@@ -34,30 +34,45 @@ class Database
         return self::$instance;
     }
 
-    public function query(string $query, array $values = []): bool|object
+    public function allQuery(string $query, array $values = []): bool
     {
         $conn = $this->pdo;
         $values = $this->convert($values);
 
         try {
             $stmt = $conn->prepare($query);
-            $exec_result = $stmt->execute($values);
+            return $stmt->execute($values);
         } catch (\PDOException $e) {
             exit('Query error: ' . $e->getMessage() . PHP_EOL);
         }
+    }
 
-        $result = $stmt->fetchAll(PDO::FETCH_OBJ);
-        return count($result) > 0 ? $result : $exec_result;
+    public function selectQuery(string $query, array $values = []): bool|object
+    {
+        $conn = $this->pdo;
+        $values = $this->convert($values);
+
+        try {
+            $stmt = $conn->prepare($query);
+            $stmt->execute($values);
+
+            return $stmt->fetchAll(PDO::FETCH_OBJ);
+        } catch (\PDOException $e) {
+            exit('Query error: ' . $e->getMessage() . PHP_EOL);
+        }
+    }
+
+    public function customQuery(string $query, array $values = []): bool|object
+    {
+        return $this->selectQuery($query, $values);
     }
 
     private function convert(array $values = []): array
     {
         $temp = [];
-
         foreach ($values as $key => $value) {
             $temp[":{$key}"] = $value;
         }
-
         return $temp;
     }
 }

@@ -2,24 +2,24 @@
 
 namespace App\Helpers;
 
-use App\core\utils\Json;
 use App\core\Response;
+use App\core\utils\Json;
 
 class ApiError
 {
-    public static function createError(int $code, string $message, string|array $details = null): string
+    public static function send(int $code, string $message, string|array $details = null): string
     {
+        $json = new Json();
+        $response = new Response();
+
         $error = [
-            'code' => $code,
+            'code' => (int)$code,
             'message' => $message
         ];
 
         if ($details !== null) {
             $error['details'] = $details;
         }
-
-        $json = new Json();
-        $response = new Response();
 
         $response->setStatusCode($code);
         return $json->send(['error' => $error]);

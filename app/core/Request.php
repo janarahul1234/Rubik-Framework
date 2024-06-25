@@ -13,22 +13,23 @@ class Request
 
     public function getUrl(): string
     {
-        switch ($_ENV['SERVER_MODE']) {
-            case 'TESTING':
-                $url = $_SERVER['QUERY_STRING'];
-                $url = str_contains($url, 'url=') ? '/' . substr($url, 4) : '/';
-                $pos = strpos($url, '&');
-
-                return $pos ? substr($url, 0, $pos) : $url;
-
-            case 'DISPLAY':
-                $url = $_SERVER['REQUEST_URI'];
-                $pos = strpos($url, '?');
-                return $pos ? substr($url, 0, $pos) : $url;
-
-            default:
-                throw new \InvalidArgumentException('Invalid server mode');
+        if ($_ENV['SERVER_MODE'] === 'PRODUCTION') {
+            $url = $_SERVER['REQUEST_URI'];
+            $symbol = '?';
         }
+
+        if ($_ENV['SERVER_MODE'] === 'DEVELOPMENT') {
+            $url = $_SERVER['QUERY_STRING'];
+            $url = str_contains($url, 'url=') ? '/' . substr($url, 4) : '/';
+            $symbol = '&';
+        }
+
+        if (isset($url)) {
+            $pos = strpos($url, $symbol);
+            return $pos ? substr($url, 0, $pos) : $url;
+        }
+
+        throw new \InvalidArgumentException('Invalid server mode!');
     }
 
     public function getMethod(): string

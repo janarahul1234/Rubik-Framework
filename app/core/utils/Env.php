@@ -6,7 +6,7 @@ use Dotenv\Dotenv;
 
 class Env
 {
-    public static function loadDotEnv(): void
+    public static function config(): void
     {
         try {
             $dotenv = Dotenv::createImmutable(ROOT_DIR);

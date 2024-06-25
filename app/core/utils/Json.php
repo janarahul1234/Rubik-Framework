@@ -11,6 +11,6 @@ class Json
 
     public function read(): array
     {
-        return (array) json_decode(file_get_contents('php://input')) ?? [];
+        return (array)json_decode(file_get_contents('php://input')) ?? [];
     }
 }
